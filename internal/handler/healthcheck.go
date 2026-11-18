@@ -20,6 +20,13 @@ func NewHealthCheck(svc service.HealthCheck) HealthCheck {
 	}
 }
 
+// Check
+// @Summary Health Check
+// @Description Check the health status of the service
+// @Tags health-check
+// @Produces application/json
+// @Success 200 {object} model.HealthStatus
+// @Router /health-check [get]
 func (h *healthCheck) Check(c *gin.Context) {
 	status := h.svc.Check()
 	c.JSON(http.StatusOK, status)

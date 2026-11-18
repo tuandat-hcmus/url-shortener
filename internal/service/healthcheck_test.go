@@ -1,27 +1,27 @@
 package service
 
 import (
-	"github.com/stretchr/testify/assert"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestHealthCheck(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
-		name        string
-		serviceName string
-		instanceID  string
+		name               string
+		serviceName        string
+		instanceID         string
 		expectedInstanceID string
 	}{
 		{
-			name: "case 1: instanceID is provided",
-			serviceName: "test-service",
-			instanceID:  "test-instance-id",
+			name:               "case 1: instanceID is provided",
+			serviceName:        "test-service",
+			instanceID:         "test-instance-id",
 			expectedInstanceID: "test-instance-id",
-		}, 
+		},
 		{
-			name: "case 2: instanceID is empty",
+			name:        "case 2: instanceID is empty",
 			serviceName: "test-service",
 			instanceID:  "",
 		},
@@ -39,7 +39,7 @@ func TestHealthCheck(t *testing.T) {
 			assert.Equal(t, tc.serviceName, status.ServiceName)
 			if tc.expectedInstanceID != "" {
 				assert.Equal(t, tc.expectedInstanceID, status.InstanceID)
-				return 
+				return
 			}
 			assert.NotEmpty(t, status.InstanceID)
 			_, err := uuid.Parse(status.InstanceID)

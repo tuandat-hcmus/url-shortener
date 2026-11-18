@@ -5,7 +5,7 @@ import (
 	"github.com/tuandat-hcmus/url-shortener/internal/model"
 )
 
-//go:generate mockery --name=HealthCheck --filename healthcheck.go --outpkg healthcheck_svc_mock
+//go:generate mockery --name=HealthCheck --filename healthcheck.go --outpkg svc_mock
 type HealthCheck interface {
 	Check() model.HealthStatus
 }
