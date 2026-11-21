@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -10,6 +11,8 @@ import (
 // URLStorage defines the interface for storing and retrieving URLs
 //
 //go:generate mockery --name URLStorage --filename urlstorage.go --outpkg repo_mock
+var NoKeyFound = errors.New("No key found")
+
 type URLStorage interface {
 	StoreURL(ctx context.Context, key, url string, expTime time.Duration) error
 	GetURL(ctx context.Context, key string) (string, error)
@@ -32,6 +35,9 @@ func (s *urlStorage) StoreURL(ctx context.Context, key, url string, expTime time
 // GetURL retrieves a URL by its key
 func (s *urlStorage) GetURL(ctx context.Context, key string) (string, error) {
 	url, err := s.c.Get(ctx, key).Result()
+	if err == redis.Nil {
+		return "", NoKeyFound
+	}
 	if err != nil {
 		return "", err
 	}

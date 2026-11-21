@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/tuandat-hcmus/url-shortener/internal/repository"
 	repo_mock "github.com/tuandat-hcmus/url-shortener/internal/repository/mocks"
 	utils_mock "github.com/tuandat-hcmus/url-shortener/pkg/utils/mocks"
 	"testing"
@@ -24,7 +25,7 @@ func TestCreateShortURL(t *testing.T) {
 				urlStorageMock := repo_mock.NewURLStorage(t)
 				codeGenMock := utils_mock.NewCodeGen(t)
 				codeGenMock.On("GenerateCode", 6).Return("abc123", nil)
-				urlStorageMock.On("GetURL", ctx, "abc123").Return("", nil)
+				urlStorageMock.On("GetURL", ctx, "abc123").Return("", repository.NoKeyFound)
 				urlStorageMock.On("StoreURL", ctx, "abc123", "http://example.com", 1*time.Minute).Return(nil)
 				return urlStorageMock, codeGenMock
 			},
@@ -50,7 +51,7 @@ func TestCreateShortURL(t *testing.T) {
 				codeGenMock.On("GenerateCode", 6).Return("abc123", nil).Once()
 				codeGenMock.On("GenerateCode", 6).Return("def456", nil).Once()
 				urlStorageMock.On("GetURL", ctx, "abc123").Return("http://example.com", nil)
-				urlStorageMock.On("GetURL", ctx, "def456").Return("", nil)
+				urlStorageMock.On("GetURL", ctx, "def456").Return("", repository.NoKeyFound)
 				urlStorageMock.On("StoreURL", ctx, "def456", "http://example.com", 1*time.Minute).Return(nil)
 				return urlStorageMock, codeGenMock
 			},

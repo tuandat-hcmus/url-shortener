@@ -31,9 +31,13 @@ func (s *shortenURL) CreateShortURL(ctx context.Context, url string, expTime tim
 	if err != nil {
 		return "", err
 	}
-	existedCode, _ := s.r.GetURL(ctx, code)
-	if existedCode != "" {
+	_, err = s.r.GetURL(ctx, code)
+	if err == nil {
 		return s.CreateShortURL(ctx, url, expTime)
+	} else {
+		if err != repository.NoKeyFound {
+			return "", err
+		}
 	}
 	err = s.r.StoreURL(ctx, code, url, expTime)
 	if err != nil {
