@@ -44,7 +44,7 @@ func TestHealthCheck(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			testApiEngine := api.NewEngine(cfg)
+			testApiEngine := api.NewEngine(cfg, nil)
 			rec, req := tc.setupTestRequest()
 			testApiEngine.ServeHTTP(rec, req)
 			assert.Equal(t, tc.expectedStatus, rec.Code)

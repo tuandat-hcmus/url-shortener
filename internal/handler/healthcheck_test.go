@@ -2,23 +2,23 @@ package handler
 
 import (
 	"context"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/tuandat-hcmus/url-shortener/internal/model"
 	healthcheck_svc_mock "github.com/tuandat-hcmus/url-shortener/internal/service/mocks"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 func TestHealthCheck(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
-		name string
-		setupMockSvc func(ctx context.Context) *healthcheck_svc_mock.HealthCheck
-		expectedStatus int 
-		expectedBody model.HealthStatus
+		name           string
+		setupMockSvc   func(ctx context.Context) *healthcheck_svc_mock.HealthCheck
+		expectedStatus int
+		expectedBody   model.HealthStatus
 	}{
 		{
 			name: "case 1: health check is OK",
