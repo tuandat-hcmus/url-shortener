@@ -77,7 +77,19 @@ func TestURLStorage_GetURL(t *testing.T) {
 			},
 			setupFunc:   nil,
 			expectedURL: "",
-			expectedErr: redis.Nil,
+			expectedErr: NoKeyFound,
+		},
+		{
+			name: "error case: redis error",
+			setupMock: func(ctx context.Context) *redis.Client {
+				mock := redisPkg.InitMockRedis(t)
+				return mock
+			},
+			setupFunc: func(ctx context.Context, c *redis.Client) {
+				c.Close() // Close the client to simulate a Redis error
+			},
+			expectedURL: "",
+			expectedErr: redis.ErrClosed,
 		},
 	}
 

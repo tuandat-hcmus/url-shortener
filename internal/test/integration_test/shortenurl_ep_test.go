@@ -69,3 +69,49 @@ func TestShortenURL(t *testing.T) {
 		})
 	}
 }
+
+func TestRedirect(t *testing.T) {
+	t.Parallel()
+	testCases := []struct {
+		name             string
+		setupTestRequest func() (rec *httptest.ResponseRecorder, req *http.Request)
+		setupMock        func(ctx context.Context) *redis.Client
+		expectedStatus   int
+		expectedLocation string
+	}{
+		{
+			name: "successful redirect",
+			setupTestRequest: func() (rec *httptest.ResponseRecorder, req *http.Request) {
+				rec = httptest.NewRecorder()
+				req = httptest.NewRequest(
+					http.MethodGet,
+					"/v1/links/redirect/abc123",
+					nil,
+				)
+				return
+			},
+			setupMock: func(ctx context.Context) *redis.Client {
+				mockRedis := redisPkg.InitMockRedis(t)
+				mockRedis.Set(ctx, "abc123", "http://example.com", 0)
+				return mockRedis
+			},
+			expectedStatus:   http.StatusMovedPermanently,
+			expectedLocation: "http://example.com",
+		},
+	}
+	cfg, err := api.NewConfig()
+	if err != nil {
+		t.Fatalf("failed to create config: %v", err)
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			mockRedis := tc.setupMock(t.Context())
+			testApiEngine := api.NewEngine(cfg, mockRedis)
+			rec, req := tc.setupTestRequest()
+			testApiEngine.ServeHTTP(rec, req)
+			assert.Equal(t, tc.expectedStatus, rec.Code)
+			assert.Equal(t, tc.expectedLocation, rec.Header().Get("Location"))
+		})
+	}
+}

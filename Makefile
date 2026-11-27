@@ -23,4 +23,4 @@ test:
 fmt: 
 	go fmt ./...
 
-dev-run: fmt swagger run
+dev-run: swagger run

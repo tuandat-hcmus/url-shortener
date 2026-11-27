@@ -7,6 +7,7 @@ type Config struct {
 	InstanceID  string `envconfig:"INSTANCE_ID"`
 	Port        int    `envconfig:"PORT" default:"8080"`
 	CodeLength  int    `envconfig:"CODE_LENGTH" default:"7"`
+	LogLevel    string `envconfig:"LOG_LEVEL" default:"info"`
 }
 
 func NewConfig() (*Config, error) {

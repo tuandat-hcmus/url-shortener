@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/tuandat-hcmus/url-shortener/internal/api"
 	"github.com/tuandat-hcmus/url-shortener/pkg/redis"
+	"github.com/tuandat-hcmus/url-shortener/pkg/logger"
 )
 
 // @title URL Shortener API
@@ -15,6 +16,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	logger.SetLogLevel(cfg.LogLevel)
 
 	redisClient, err := redis.NewClient("")
 	if err != nil {

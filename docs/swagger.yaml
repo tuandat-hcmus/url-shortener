@@ -3,9 +3,14 @@ definitions:
   handler.shortenURLRequest:
     properties:
       exp:
+        description: Expiration time in seconds
+        maximum: 86400
         type: integer
       url:
         type: string
+    required:
+    - exp
+    - url
     type: object
   handler.shortenURLResponse:
     properties:
@@ -40,6 +45,39 @@ paths:
       summary: Health Check
       tags:
       - health-check
+  /v1/links/redirect/{code}:
+    get:
+      description: Redirect to the original URL for the given short code
+      parameters:
+      - description: Short code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "301":
+          description: Moved Permanently
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Redirect to Original URL
+      tags:
+      - links
   /v1/links/shorten:
     post:
       description: Create a short URL for the given long URL

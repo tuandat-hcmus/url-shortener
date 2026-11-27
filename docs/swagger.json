@@ -25,6 +25,56 @@
                 }
             }
         },
+        "/v1/links/redirect/{code}": {
+            "get": {
+                "description": "Redirect to the original URL for the given short code",
+                "tags": [
+                    "links"
+                ],
+                "summary": "Redirect to Original URL",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Short code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "301": {
+                        "description": "Moved Permanently"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/links/shorten": {
             "post": {
                 "description": "Create a short URL for the given long URL",
@@ -75,9 +125,15 @@
     "definitions": {
         "handler.shortenURLRequest": {
             "type": "object",
+            "required": [
+                "exp",
+                "url"
+            ],
             "properties": {
                 "exp": {
-                    "type": "integer"
+                    "description": "Expiration time in seconds",
+                    "type": "integer",
+                    "maximum": 86400
                 },
                 "url": {
                     "type": "string"
