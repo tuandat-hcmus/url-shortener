@@ -57,5 +57,6 @@ func (e *engine) initRoutes() {
 	v1Routes := e.app.Group("/v1")
 	{
 		v1Routes.POST("/links/shorten", shortenURLHandler.CreateShortURL)
+		v1Routes.GET("/links/redirect/:code", shortenURLHandler.Redirect)
 	}
 }

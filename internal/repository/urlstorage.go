@@ -35,10 +35,10 @@ func (s *urlStorage) StoreURL(ctx context.Context, key, url string, expTime time
 // GetURL retrieves a URL by its key
 func (s *urlStorage) GetURL(ctx context.Context, key string) (string, error) {
 	url, err := s.c.Get(ctx, key).Result()
-	if err == redis.Nil {
-		return "", NoKeyFound
-	}
 	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return "", NoKeyFound
+		}
 		return "", err
 	}
 	return url, nil

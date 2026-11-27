@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/tuandat-hcmus/url-shortener/internal/repository"
 	"github.com/tuandat-hcmus/url-shortener/pkg/utils"
 	"time"
@@ -12,6 +13,7 @@ import (
 //go:generate mockery --name ShortenURL --filename shortenurl.go --outpkg svc_mock
 type ShortenURL interface {
 	CreateShortURL(ctx context.Context, url string, expTime time.Duration) (string, error)
+	GetUrlFromCode(ctx context.Context, code string) (string, error)
 }
 
 type shortenURL struct {
@@ -44,4 +46,17 @@ func (s *shortenURL) CreateShortURL(ctx context.Context, url string, expTime tim
 		return "", err
 	}
 	return code, nil
+}
+
+var ErrUrlNotFound = errors.New("URL not found")
+
+func (s *shortenURL) GetUrlFromCode(ctx context.Context, code string) (string, error) {
+	url, err := s.r.GetURL(ctx, code)
+	if err != nil {
+		if errors.Is(err, repository.NoKeyFound) {
+			return "", ErrUrlNotFound
+		}
+		return "", err
+	}
+	return url, nil
 }
